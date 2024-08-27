@@ -17,17 +17,14 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import nltk
 
-# Ensure GPU usage
 physical_devices = tf.config.list_physical_devices('GPU')
 if len(physical_devices) > 0:
     tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
-# Download necessary NLTK data
 nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 
-# Improved text preprocessing
 lemmatizer = WordNetLemmatizer()
 
 def improved_preprocess_text(text):
@@ -39,11 +36,9 @@ def improved_preprocess_text(text):
     text = ' '.join(tokens)
     return text
 
-# Load and preprocess data
 filename = "DATASET/News_sentiment_Jan2017_to_Apr2021.csv"
 df = pd.read_csv(filename, usecols=[1, 3], names=["text", "sentiment"], encoding="utf-8", encoding_errors="replace")
 
-# Reset the index
 df = df.reset_index(drop=True)
 
 df.dropna(inplace=True)
@@ -55,7 +50,6 @@ X_text = df['text'].values
 y = df['sentiment'].values
 print(df.head())
 
-# Tokenization and padding
 max_words = 250000
 max_len = 150
 tokenizer = Tokenizer(num_words=max_words)
@@ -69,7 +63,6 @@ vocabulary_size = len(tokenizer.word_index)
 print("Total number of tokens:", total_tokens)
 print("Size of vocabulary:", vocabulary_size)
 
-# Split data
 X_train, X_test, y_train, y_test = train_test_split(X_text, y, test_size=0.2, random_state=32)
 
 def build_model():
@@ -100,14 +93,11 @@ def build_model():
     model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
     return model
 
-# Build and train the model
 model = build_model()
 
-# Callbacks
 early_stop = EarlyStopping(monitor='val_accuracy', patience=3, restore_best_weights=True)
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=2, min_lr=1e-6)
 
-# Train the model
 history = model.fit(
     X_train, y_train,
     validation_split=0.2,
@@ -117,7 +107,6 @@ history = model.fit(
     verbose=1
 )
 
-# Plot training history
 plt.figure(figsize=(12, 5))
 plt.subplot(1, 2, 1)
 plt.plot(history.history['accuracy'], label='Train')
@@ -139,11 +128,9 @@ plt.tight_layout()
 plt.savefig('model_metrics.png')
 plt.close()
 
-# Evaluate on test set
 y_pred = model.predict(X_test)
 y_pred_labels = (y_pred > 0.5).astype(int)
 
-# Evaluation function
 def evaluate(y_true, y_pred):
     accuracy = accuracy_score(y_true=y_true, y_pred=y_pred)
     print(f'Accuracy: {accuracy:.3f}')
