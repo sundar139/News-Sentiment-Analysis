@@ -1,6 +1,5 @@
 ## News Sentiment Analysis Project
 
-*Project Description*
 This project implements two advanced sentiment analysis models for classifying news articles as either positive or negative. The project showcases the application of cutting-edge natural language processing techniques, deep learning architectures, and transfer learning to achieve high-accuracy sentiment prediction.
 
 *Key Components:*
